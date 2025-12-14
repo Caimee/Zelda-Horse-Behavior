@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "zelda_horse_behavior",
+  "version": "${version}",
+  "name": "Zelda Horse Behavior",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/zelda_horse_behavior/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.sample.zelda_horse_behavior.client.Zelda_horse_behaviorDataGenerator"
+    ],
+    "client": [
+      "org.sample.zelda_horse_behavior.client.Zelda_horse_behaviorClient"
+    ],
+    "main": [
+      "org.sample.zelda_horse_behavior.Zelda_horse_behavior"
+    ]
+  },
+  "mixins": [
+    "zelda_horse_behavior.mixins.json",
+    {
+      "config": "zelda_horse_behavior.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
