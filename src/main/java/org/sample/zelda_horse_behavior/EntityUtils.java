@@ -12,7 +12,6 @@ import org.sample.zelda_horse_behavior.PlayerSystem.PlayerState;
 
 import java.util.List;
 
-import static org.sample.zelda_horse_behavior.LogicConfig.ANGLE;
 import static org.sample.zelda_horse_behavior.Zelda_horse_behavior.MobStates;
 import static org.sample.zelda_horse_behavior.Zelda_horse_behavior.playerStates;
 
@@ -37,11 +36,12 @@ public class EntityUtils {
 
 
     public static boolean FOVcheck(LivingEntity animal, PlayerEntity player) {
+        int angle = getPlayerState(player).ANGLE;
         Vec3d vec = player.getPos().subtract(animal.getPos()).normalize();// vector from animal to player
         Vec3d facing = Vec3d.fromPolar(0, animal.getHeadYaw()).normalize();// vector animal's head
 
         // calculate and compare the dot product
         double dot = facing.dotProduct(vec);
-        return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV !
+        return dot > Math.cos(Math.toRadians(angle * 0.5));// ANGLE is the whole FOV !
     }
 }

@@ -28,7 +28,6 @@ public class horseStateMachine {
             case FLEEING:
                 if(distance >= STOP_RANGE){
                     mobState.currentState = DEFAULT_EMPTY;
-                    horse.setAttacker(player);
                 }
                 break;
         }

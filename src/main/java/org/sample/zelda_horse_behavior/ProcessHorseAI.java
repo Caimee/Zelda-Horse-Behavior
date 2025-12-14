@@ -1,6 +1,5 @@
 package org.sample.zelda_horse_behavior;
 
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -50,12 +49,13 @@ public class ProcessHorseAI {
         }
     }
 
-    public static void applyFlee_logic(MobEntity animal, PlayerEntity player) {
-        Vec3d fromPlayer = animal.getPos().subtract(player.getPos()).normalize();// vector from player to animal
+    public static void applyFlee_logic(HorseEntity horse, PlayerEntity player) {
+        horse.setEatingGrass(false);
+        Vec3d fromPlayer = horse.getPos().subtract(player.getPos()).normalize();// vector from player to horse
         Vec3d fleeDir = fromPlayer.multiply(26.5);// flee distance
-        Vec3d targetPos = animal.getPos().add(fleeDir);// target position
+        Vec3d targetPos = horse.getPos().add(fleeDir);// target position
         // initiate movement towards the target position at flee speed
-        animal.getNavigation().startMovingTo(
+        horse.getNavigation().startMovingTo(
                 targetPos.x,
                 targetPos.y,
                 targetPos.z,

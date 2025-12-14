@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import org.sample.zelda_horse_behavior.HorseSystem.HorseState.MobState;
 import org.sample.zelda_horse_behavior.PlayerSystem.PlayerState;
@@ -21,7 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+import static org.sample.zelda_horse_behavior.EntityUtils.getMobState;
 import static org.sample.zelda_horse_behavior.HorseSystem.HorseState.State.DEFAULT_EMPTY;
+import static org.sample.zelda_horse_behavior.HorseSystem.HorseState.State.FRIENDLY;
 import static org.sample.zelda_horse_behavior.ProcessHorseAI.processHorseAI;
 
 public class Zelda_horse_behavior implements ModInitializer {
@@ -29,9 +32,12 @@ public class Zelda_horse_behavior implements ModInitializer {
     public static WeakHashMap<MobEntity, MobState> MobStates = new WeakHashMap<>();// Store mob states with weak references
     public static WeakHashMap<PlayerEntity, PlayerState> playerStates = new WeakHashMap<>();// Store player states with weak references
     public static final Map<UUID, Long> dismountLockUntil = new HashMap<>();
+
     @Override
     public void onInitialize() {
+
         ServerTickEvents.END_WORLD_TICK.register(this::onWorldTick);
+
         // Handle forced mounting in dismount lock period
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             long tick = server.getTicks();
@@ -64,12 +70,10 @@ public class Zelda_horse_behavior implements ModInitializer {
             }
         });
 
-        System.out.println("FleeOnSight Mod initialized!");
-
         // Prevent interaction with fleeing horses
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (!world.isClient && entity instanceof HorseEntity horse) {
-                MobState horseState = EntityUtils.getMobState(horse);
+                MobState horseState = getMobState(horse);
                 if (horseState.currentState ==
                         org.sample.zelda_horse_behavior.HorseSystem.HorseState.State.FLEEING) {
                     return ActionResult.FAIL;
@@ -90,7 +94,7 @@ public class Zelda_horse_behavior implements ModInitializer {
                 return ActionResult.PASS;
             }
 
-            MobState horseState = EntityUtils.getMobState(horse);
+            MobState horseState = getMobState(horse);
             if (horseState.currentState != DEFAULT_EMPTY) {
                 return ActionResult.PASS;
             }
@@ -108,12 +112,15 @@ public class Zelda_horse_behavior implements ModInitializer {
                 return ActionResult.FAIL;
             }
 
+            horseState.currentState = FRIENDLY;
 
             PlayerState ps = Zelda_horse_behavior.playerStates
                     .computeIfAbsent(player, p -> new PlayerState());
 
             ps.forceMountedHorse = horse.getUuid();
             ps.forceMountTick = world.getTime();
+
+            horse.playSound(SoundEvents.ENTITY_HORSE_ANGRY, 1.0F, 1.0F);
 
             ((ServerWorld) world).getServer().execute(() -> {
                 if (!player.hasVehicle() && horse.isAlive()) {
@@ -134,12 +141,14 @@ public class Zelda_horse_behavior implements ModInitializer {
                         player.setYaw(horse.getYaw());
                         player.setPitch(horse.getPitch());
                         player.startRiding(horse);
-                    long unlockTick = world.getServer().getTicks() + 22;
+                    long unlockTick = world.getServer().getTicks() + 30;
                     dismountLockUntil.put(player.getUuid(), unlockTick);
                 }
             });
-            return ActionResult.CONSUME;
+            return ActionResult.CONSUME;// prevent vanilla processing
         });
+
+        System.out.println("FleeOnSight Mod initialized!");
     }
 
     private void onWorldTick(ServerWorld world) {

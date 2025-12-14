@@ -3,7 +3,7 @@ package org.sample.zelda_horse_behavior.PlayerSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import org.sample.zelda_horse_behavior.LogicConfig;
 
-import static org.sample.zelda_horse_behavior.LogicConfig.SNEAK_RANGE;
+import static org.sample.zelda_horse_behavior.LogicConfig.*;
 
 // State machine for player
 public class PlayerStateMachine {
@@ -25,10 +25,12 @@ public class PlayerStateMachine {
     public static void playerStateExecute(PlayerState state) {
         if (state.isSneaking) {
             state.detectionRange = SNEAK_RANGE;
+            state.ANGLE = SNEAK_ANGLE;
 
         }
         if (!state.isSneaking) {
-            state.detectionRange = LogicConfig.DEFAULT_DETECTION_RANGE;
+            state.detectionRange = DEFAULT_DETECTION_RANGE;
+            state.ANGLE = DEFAULT_ANGLE;
         }
     }
 }
