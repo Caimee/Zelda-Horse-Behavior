@@ -14,5 +14,7 @@
 - Approach slowly and carefully before the horse notices you.
   
 - Once you're close enough, right-click with a saddle to mount and tame the horse!
+<img width="2410" height="1477" alt="2025-12-16_20 12 13" src="https://github.com/user-attachments/assets/f84a43bb-219c-48fb-9e5a-76516bd6a042" />
 
 #### More details will be added in future updates.
+
